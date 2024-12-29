@@ -5,18 +5,17 @@ const Task = require('../models/task');
 
 const router = express.Router();//new object
 
-// add task
+// Ajouter une tâche
 router.post('/', async (req, res) => {
   try {
-    const { title } = req.body; //send  infos 
-    if (!title) {
-      return res.status(400).json({ message: 'Le titre et la description obligatoires.'});
+    const { title, description } = req.body;
+    if (!title || !description) {
+      return res.status(400).json({ message: 'Title and description are required.' });
     }
-    const newTask = new Task({ title, description}); //creation new instance
-    await newTask.save(); //save task in mongodb
+    const newTask = await Task.create({ title, description });
     res.status(201).json(newTask);
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur', error: err.message });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create task', error });
   }
 });
 
